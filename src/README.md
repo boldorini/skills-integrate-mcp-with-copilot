@@ -1,11 +1,29 @@
 # Mergington High School Activities API
 
-A super simple FastAPI application that allows students to view and sign up for extracurricular activities.
+A simple FastAPI application for viewing and managing extracurricular activity registrations.
 
 ## Features
 
 - View all available extracurricular activities
-- Sign up for activities
+- Teachers can register and unregister students after logging in
+- Students can view activities and participant lists without logging in
+
+## Teacher Accounts
+
+Teacher accounts are configured in `src/teachers.json`. Add assigned credentials
+to its `teachers` list, for example:
+
+```json
+{
+  "teachers": [
+    { "username": "teacher1", "password": "assigned-password" }
+  ]
+}
+```
+
+The file is checked in as an empty template. Do not use example credentials in
+production; restrict access to the repository and serve the application over
+HTTPS because passwords are stored in this file.
 
 ## Getting Started
 
@@ -29,8 +47,12 @@ A super simple FastAPI application that allows students to view and sign up for 
 
 | Method | Endpoint                                                          | Description                                                         |
 | ------ | ----------------------------------------------------------------- | ------------------------------------------------------------------- |
-| GET    | `/activities`                                                     | Get all activities with their details and current participant count |
-| POST   | `/activities/{activity_name}/signup?email=student@mergington.edu` | Sign up for an activity                                             |
+| GET    | `/activities`                                                     | Get all activities and current participants (public)                 |
+| GET    | `/auth/status`                                                    | Check whether the current browser is logged in as a teacher          |
+| POST   | `/auth/login`                                                     | Log in with a JSON `username` and `password`                          |
+| POST   | `/auth/logout`                                                    | Log out the current browser                                          |
+| POST   | `/activities/{activity_name}/signup?email=student@mergington.edu` | Register a student (teacher login required)                          |
+| DELETE | `/activities/{activity_name}/unregister?email=student@mergington.edu` | Unregister a student (teacher login required)                     |
 
 ## Data Model
 
