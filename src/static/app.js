@@ -3,18 +3,81 @@ document.addEventListener("DOMContentLoaded", () => {
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
+  const searchInput = document.getElementById("activity-search");
+  const categoryFilter = document.getElementById("category-filter");
+  const sortSelect = document.getElementById("activity-sort");
+  let activitiesData = {};
+  let activityOptionsLoaded = false;
 
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
       const response = await fetch("/activities");
-      const activities = await response.json();
+      activitiesData = await response.json();
 
-      // Clear loading message
-      activitiesList.innerHTML = "";
+      if (!activityOptionsLoaded) {
+        Object.entries(activitiesData).forEach(([name, details]) => {
+          const option = document.createElement("option");
+          option.value = name;
+          option.textContent = name;
+          activitySelect.appendChild(option);
+        });
 
-      // Populate activities list
-      Object.entries(activities).forEach(([name, details]) => {
+        [...new Set(Object.values(activitiesData).map(({ category }) => category))]
+          .sort()
+          .forEach((category) => {
+            const option = document.createElement("option");
+            option.value = category;
+            option.textContent = category;
+            categoryFilter.appendChild(option);
+          });
+        activityOptionsLoaded = true;
+      }
+
+      renderActivities();
+    } catch (error) {
+      activitiesList.innerHTML =
+        "<p>Failed to load activities. Please try again later.</p>";
+      console.error("Error fetching activities:", error);
+    }
+  }
+
+  function renderActivities() {
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    const selectedCategory = categoryFilter.value;
+    const sortBy = sortSelect.value;
+    const filteredActivities = Object.entries(activitiesData)
+      .filter(([name, details]) => {
+        const searchableText = [
+          name,
+          details.description,
+          details.schedule,
+          details.category,
+        ]
+          .join(" ")
+          .toLowerCase();
+        return (
+          (!selectedCategory || details.category === selectedCategory) &&
+          (!searchTerm || searchableText.includes(searchTerm))
+        );
+      })
+      .sort(([nameA, detailsA], [nameB, detailsB]) => {
+        if (sortBy === "name") {
+          return nameA.localeCompare(nameB);
+        }
+        return (
+          detailsA.schedule_order - detailsB.schedule_order ||
+          nameA.localeCompare(nameB)
+        );
+      });
+
+    activitiesList.innerHTML = "";
+    if (filteredActivities.length === 0) {
+      activitiesList.innerHTML = "<p>No activities match your filters.</p>";
+      return;
+    }
+
+    filteredActivities.forEach(([name, details]) => {
         const activityCard = document.createElement("div");
         activityCard.className = "activity-card";
 
@@ -39,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         activityCard.innerHTML = `
           <h4>${name}</h4>
+          <p class="activity-category">${details.category}</p>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
@@ -48,23 +112,11 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
         activitiesList.appendChild(activityCard);
-
-        // Add option to select dropdown
-        const option = document.createElement("option");
-        option.value = name;
-        option.textContent = name;
-        activitySelect.appendChild(option);
       });
 
-      // Add event listeners to delete buttons
       document.querySelectorAll(".delete-btn").forEach((button) => {
         button.addEventListener("click", handleUnregister);
       });
-    } catch (error) {
-      activitiesList.innerHTML =
-        "<p>Failed to load activities. Please try again later.</p>";
-      console.error("Error fetching activities:", error);
-    }
   }
 
   // Handle unregister functionality
@@ -154,6 +206,10 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error signing up:", error);
     }
   });
+
+  searchInput.addEventListener("input", renderActivities);
+  categoryFilter.addEventListener("change", renderActivities);
+  sortSelect.addEventListener("change", renderActivities);
 
   // Initialize app
   fetchActivities();

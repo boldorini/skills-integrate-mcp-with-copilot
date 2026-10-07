@@ -15,6 +15,25 @@
     <main>
       <section id="activities-container">
         <h3>Available Activities</h3>
+        <div class="activity-filters">
+          <div class="filter-group">
+            <label for="activity-search">Search activities</label>
+            <input type="search" id="activity-search" placeholder="Name, description, or schedule" />
+          </div>
+          <div class="filter-group">
+            <label for="category-filter">Category</label>
+            <select id="category-filter">
+              <option value="">All categories</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="activity-sort">Sort by</label>
+            <select id="activity-sort">
+              <option value="schedule">Schedule (soonest first)</option>
+              <option value="name">Name (A–Z)</option>
+            </select>
+          </div>
+        </div>
         <div id="activities-list">
           <!-- Activities will be loaded here -->
           <p>Loading activities...</p>
