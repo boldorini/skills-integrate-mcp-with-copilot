@@ -7,12 +7,35 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <svg class="branch-background" aria-hidden="true" focusable="false" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+      <path class="branch-line branch-line--main" d="M-80 720h280c100 0 100-180 200-180h170c100 0 100-220 200-220h300c100 0 100-180 200-180h220" />
+      <path class="branch-line branch-line--feature" d="M400 540c100 0 100 150 200 150h220c100 0 100-130 200-130h190" />
+      <path class="branch-line branch-line--merge" d="M770 320c100 0 100 160 200 160h140c100 0 100 100 200 100h180" />
+      <circle class="branch-node" cx="400" cy="540" r="7" />
+      <circle class="branch-node" cx="770" cy="320" r="7" />
+      <circle class="branch-node" cx="1020" cy="690" r="7" />
+    </svg>
     <header>
       <h1>Mergington High School</h1>
       <h2>Extracurricular Activities</h2>
     </header>
 
     <main>
+      <section class="mascot-showcase" aria-label="Our Octodex mascots">
+        <figure>
+          <img src="https://octodex.github.com/images/Professortocat_v2.png" alt="Professortocat, the school’s professor mascot" />
+          <figcaption>Professortocat</figcaption>
+        </figure>
+        <figure>
+          <img src="https://octodex.github.com/images/Dinotocat.png" alt="Dinotocat, a playful dinosaur Octocat" />
+          <figcaption>Dinotocat</figcaption>
+        </figure>
+        <figure>
+          <img src="https://octodex.github.com/images/Filmtocat.png" alt="Filmtocat, an Octocat ready for the movies" />
+          <figcaption>Filmtocat</figcaption>
+        </figure>
+      </section>
+
       <section id="activities-container">
         <h3>Available Activities</h3>
         <div id="activities-list">
